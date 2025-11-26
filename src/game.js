@@ -57,66 +57,58 @@ export class Game {
             const oldHealth = this.health;
             this.health = Math.min(this.health + healAmount, this.maxHealth);
             message = `Healed ${this.health - oldHealth} HP.`;
+            this.finishTurn(index, message);
         } else if (card.type === 'weapon') {
             this.weapon = card;
-            this.lastFoughtValue = 0; // Reset last fought when getting new weapon? 
-            // Rule check: "A weapon cannot be used to fight a monster if that monster's value is equal to or greater than the last monster the weapon defeated"
-            // Actually, usually equipping a weapon just equips it. The restriction is on USE.
-            // Let's assume equipping resets the tracking for that weapon instance.
+            this.lastFoughtValue = 0;
             message = `Equipped ${card.toString()}.`;
+            this.finishTurn(index, message);
         } else if (card.type === 'monster') {
             // Combat
-            let damage = card.value;
-
             if (this.weapon) {
                 // Check if weapon can be used
-                if (this.lastFoughtValue > 0 && card.value >= this.lastFoughtValue) {
-                    // Cannot use weapon (monster is weaker than last one fought with this weapon? Wait, rule says:
-                    // "cannot be used ... if that monster's value is EQUAL TO OR GREATER THAN the last monster the weapon defeated"
-                    // Wait, usually it's: you can only fight monsters WEAKER than the previous one?
-                    // Let's re-read the rule from search: "cannot be used to fight a monster if that monster's value is equal to or greater than the last monster the weapon defeated"
-                    // This implies we track the LAST monster defeated by THIS weapon.
-                    // And the NEXT monster must be WEAKER (strictly less?).
-                    // Actually, standard rule is: You can chain kills. 
-                    // Usually: Weapon value W. Monster M. 
-                    // If M <= W, you take 0 damage? No, "subtract weapon's value from monster's value".
-                    // So Damage = max(0, M - W).
-                    // The "last monster" rule is for CHAINING.
-                    // Let's stick to the search result: "A weapon cannot be used to fight a monster if that monster's value is equal to or greater than the last monster the weapon defeated"
-                    // This means we need to track `lastFoughtValue` for the current weapon.
-                    // Initial `lastFoughtValue` for a new weapon should be effectively infinite (or just 0 and logic inverted? No).
-                    // Actually, usually the rule is: You can fight ANY monster with a fresh weapon.
-                    // Once you fight a monster of value X, the next monster must be < X.
+                // Rule: Cannot use weapon if monster value >= last monster defeated by weapon
+                const weaponIneffective = (this.lastFoughtValue > 0 && card.value >= this.lastFoughtValue);
 
-                    // Let's implement:
-                    // If lastFoughtValue == 0 (fresh weapon), can fight anything.
-                    // Else, if card.value >= lastFoughtValue, CANNOT use weapon. Barehanded.
-
-                    if (this.lastFoughtValue > 0 && card.value >= this.lastFoughtValue) {
-                        // Weapon ineffective (too strong/equal to last kill)
-                        message = `Weapon ineffective! Took ${damage} damage.`;
-                        this.health -= damage;
-                    } else {
-                        // Use weapon
-                        const damageTaken = Math.max(0, damage - this.weapon.value);
-                        this.health -= damageTaken;
-                        this.lastFoughtValue = card.value;
-                        message = `Fought with weapon. Took ${damageTaken} damage.`;
-                    }
+                if (weaponIneffective) {
+                    // Must fight barehanded (or weapon is ineffective)
+                    this.resolveCombat(card, index, false, true); // ineffective = true
                 } else {
-                    // Fresh weapon
-                    const damageTaken = Math.max(0, damage - this.weapon.value);
-                    this.health -= damageTaken;
-                    this.lastFoughtValue = card.value;
-                    message = `Fought with weapon. Took ${damageTaken} damage.`;
+                    // Weapon IS effective. User has a CHOICE.
+                    this.ui.showChoice((useWeapon) => {
+                        this.resolveCombat(card, index, useWeapon, false);
+                    });
+                    return; // Stop execution here, wait for callback
                 }
             } else {
-                // Barehanded
-                this.health -= damage;
-                message = `Fought barehanded. Took ${damage} damage.`;
+                // No weapon, fight barehanded
+                this.resolveCombat(card, index, false, false);
             }
         }
+    }
 
+    resolveCombat(card, index, useWeapon, weaponIneffective) {
+        let message = "";
+        let damage = card.value;
+
+        if (weaponIneffective) {
+            message = `Weapon ineffective! Took ${damage} damage.`;
+            this.health -= damage;
+        } else if (useWeapon) {
+            const damageTaken = Math.max(0, damage - this.weapon.value);
+            this.health -= damageTaken;
+            this.lastFoughtValue = card.value;
+            message = `Fought with weapon. Took ${damageTaken} damage.`;
+        } else {
+            // Barehanded (voluntary or no weapon)
+            this.health -= damage;
+            message = `Fought barehanded. Took ${damage} damage.`;
+        }
+
+        this.finishTurn(index, message);
+    }
+
+    finishTurn(index, message) {
         // Remove card from room
         this.room.splice(index, 1);
         this.cardsPlayedInRoom++;
@@ -131,9 +123,6 @@ export class Game {
 
         // Check if room needs refresh
         if (this.cardsPlayedInRoom >= 3) {
-            // Discard remaining card? No, it stays for next room.
-            // But we only have 1 card left.
-            // So we just deal 3 more.
             setTimeout(() => {
                 this.dealRoom();
                 this.updateUI();
@@ -148,10 +137,6 @@ export class Game {
         this.gameOver = true;
         let score = this.health;
         if (!won) {
-            // Calculate negative score: - (sum of monsters in deck + room)
-            // For simplicity, just showing health or 0 for now, or implement full scoring later.
-            // Search said: "subtracting the values of all monsters still in the Dungeon"
-            // We'll just show 0 for loss for now or implement properly if needed.
             score = 0;
         }
         this.ui.showGameOver(won, score);

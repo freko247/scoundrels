@@ -1,8 +1,9 @@
 :root {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
+    --bg-color: #1a1a1a;
     --text-color: #e0e0e0;
-    --accent-color: #bb86fc;
+    --card-bg: #f0f0f0;
+    --accent-color: #ff5252;
+    --modal-bg: rgba(0, 0, 0, 0.8);
     --danger-color: #cf6679;
     --health-color: #03dac6;
     --weapon-color: #ffb74d;
@@ -10,14 +11,47 @@
 }
 
 body {
-    margin: 0;
-    padding: 0;
+    font-family: 'Outfit', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: var(--font-main);
+    margin: 0;
     display: flex;
     justify-content: center;
     min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #2d2d2d;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    max-width: 90%;
+    width: 400px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
 }
 
 #app {
@@ -56,7 +90,7 @@ h1 {
     background: var(--card-bg);
     padding: 8px 16px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 #game-board {
@@ -93,12 +127,12 @@ h1 {
     transition: transform 0.2s, box-shadow 0.2s;
     user-select: none;
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
 }
 
 .card.red {
@@ -109,7 +143,8 @@ h1 {
     color: #212121;
 }
 
-.card-top, .card-bottom {
+.card-top,
+.card-bottom {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -169,6 +204,7 @@ h1 {
         opacity: 0;
         transform: translateY(-50px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -179,7 +215,18 @@ h1 {
     animation: deal 0.3s ease-out backwards;
 }
 
-.card:nth-child(1) { animation-delay: 0.1s; }
-.card:nth-child(2) { animation-delay: 0.2s; }
-.card:nth-child(3) { animation-delay: 0.3s; }
-.card:nth-child(4) { animation-delay: 0.4s; }
+.card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.card:nth-child(4) {
+    animation-delay: 0.4s;
+}

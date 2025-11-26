@@ -8,6 +8,10 @@ export class UI {
         this.messageArea = document.getElementById('message-area');
         this.resetBtn = document.getElementById('reset-btn');
 
+        this.choiceModal = document.getElementById('choice-modal');
+        this.useWeaponBtn = document.getElementById('use-weapon-btn');
+        this.barehandedBtn = document.getElementById('barehanded-btn');
+
         this.onCardClick = null;
     }
 
@@ -64,5 +68,29 @@ export class UI {
                 <p>Score: ${score}</p>
             </div>
         `;
+    }
+
+    showChoice(callback) {
+        this.choiceModal.classList.remove('hidden');
+
+        // Clean up previous listeners to avoid duplicates if any (simple approach)
+        const newWeaponBtn = this.useWeaponBtn.cloneNode(true);
+        const newBareBtn = this.barehandedBtn.cloneNode(true);
+
+        this.useWeaponBtn.parentNode.replaceChild(newWeaponBtn, this.useWeaponBtn);
+        this.barehandedBtn.parentNode.replaceChild(newBareBtn, this.barehandedBtn);
+
+        this.useWeaponBtn = newWeaponBtn;
+        this.barehandedBtn = newBareBtn;
+
+        this.useWeaponBtn.addEventListener('click', () => {
+            this.choiceModal.classList.add('hidden');
+            callback(true);
+        });
+
+        this.barehandedBtn.addEventListener('click', () => {
+            this.choiceModal.classList.add('hidden');
+            callback(false);
+        });
     }
 }
