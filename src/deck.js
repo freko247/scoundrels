@@ -49,4 +49,10 @@ export class Deck {
     add(cards) {
         this.cards.push(...cards);
     }
+
+    getRemainingMonsterValue() {
+        return this.cards.reduce((total, card) => {
+            return total + (card.type === 'monster' ? card.value : 0);
+        }, 0);
+    }
 }

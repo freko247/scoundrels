@@ -137,7 +137,11 @@ export class Game {
         this.gameOver = true;
         let score = this.health;
         if (!won) {
-            score = 0;
+            const deckMalus = this.deck.getRemainingMonsterValue();
+            const roomMalus = this.room.reduce((total, card) => {
+                return total + (card.type === 'monster' ? card.value : 0);
+            }, 0);
+            score = -(deckMalus + roomMalus);
         }
         this.ui.showGameOver(won, score);
     }
