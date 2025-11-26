@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoundrels</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <h1>Scoundrels</h1>
+            <div id="stats">
+                <div class="stat">Health: <span id="health">20</span>/20</div>
+                <div class="stat">Weapon: <span id="weapon">None</span></div>
+                <div class="stat">Last Fought: <span id="last-fought">0</span></div>
+                <div class="stat">Cards Left: <span id="cards-left">0</span></div>
+            </div>
+        </header>
+
+        <main id="game-board">
+            <div id="room-container">
+                <!-- Cards will be dealt here -->
+            </div>
+            <div id="message-area"></div>
+        </main>
+
+        <div id="controls">
+            <button id="reset-btn" class="btn">New Game</button>
+        </div>
+    </div>
+    <script type="module" src="src/main.js"></script>
+</body>
+
+</html>
