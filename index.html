@@ -32,17 +32,39 @@
         </main>
 
         <div id="controls">
+            <button id="tutorial-btn" class="btn">Tutorial</button>
             <button id="reset-btn" class="btn">New Game</button>
         </div>
 
-        <div id="choice-modal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Combat Choice</h2>
-                <p>Do you want to use your weapon or fight barehanded?</p>
-                <div class="modal-actions">
-                    <button id="use-weapon-btn" class="btn">Use Weapon</button>
-                    <button id="barehanded-btn" class="btn">Fight Barehanded</button>
-                </div>
+
+
+
+
+    </div>
+
+    <div id="choice-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Combat Choice</h2>
+            <p>Do you want to use your weapon or fight barehanded?</p>
+            <div class="modal-actions">
+                <button id="use-weapon-btn" class="btn">Use Weapon</button>
+                <button id="barehanded-btn" class="btn">Fight Barehanded</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="hidden">
+        <div id="tutorial-sidebar">
+            <h3>Tutorial Chapters</h3>
+            <div id="tutorial-chapters"></div>
+            <button id="tutorial-exit-btn" class="btn">Exit Tutorial</button>
+        </div>
+        <div id="tutorial-content">
+            <div id="tutorial-text"></div>
+            <div id="tutorial-actions">
+                <button id="tutorial-prev-btn" class="btn">Previous</button>
+                <button id="tutorial-next-btn" class="btn">Next</button>
             </div>
         </div>
     </div>
