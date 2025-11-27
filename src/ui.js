@@ -13,6 +13,10 @@ export class UI {
         this.useWeaponBtn = document.getElementById('use-weapon-btn');
         this.barehandedBtn = document.getElementById('barehanded-btn');
 
+        this.rulesOverlay = document.getElementById('rules-overlay');
+        this.rulesBtn = document.getElementById('rules-btn');
+        this.closeRulesBtn = document.getElementById('close-rules-btn');
+
         this.onCardClick = null;
     }
 
@@ -22,6 +26,15 @@ export class UI {
 
     bindSkipRoom(handler) {
         this.skipBtn.addEventListener('click', handler);
+    }
+
+    bindRules() {
+        this.rulesBtn.addEventListener('click', () => {
+            this.rulesOverlay.classList.remove('hidden');
+        });
+        this.closeRulesBtn.addEventListener('click', () => {
+            this.rulesOverlay.classList.add('hidden');
+        });
     }
 
     bindCardClick(handler) {

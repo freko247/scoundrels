@@ -29,11 +29,13 @@
                 <!-- Cards will be dealt here -->
             </div>
             <div id="message-area"></div>
+            <div id="action-area">
+                <button id="skip-btn" class="btn">Run (Skip Room)</button>
+            </div>
         </main>
 
         <div id="controls">
-            <button id="tutorial-btn" class="btn">Tutorial</button>
-            <button id="skip-btn" class="btn">Run (Skip Room)</button>
+            <button id="rules-btn" class="btn">Rules</button>
             <button id="reset-btn" class="btn">New Game</button>
         </div>
 
@@ -54,18 +56,34 @@
         </div>
     </div>
 
-    <!-- Tutorial Overlay -->
-    <div id="tutorial-overlay" class="hidden">
-        <div id="tutorial-sidebar">
-            <h3>Tutorial Chapters</h3>
-            <div id="tutorial-chapters"></div>
-            <button id="tutorial-exit-btn" class="btn">Exit Tutorial</button>
-        </div>
-        <div id="tutorial-content">
-            <div id="tutorial-text"></div>
-            <div id="tutorial-actions">
-                <button id="tutorial-prev-btn" class="btn">Previous</button>
-                <button id="tutorial-next-btn" class="btn">Next</button>
+    <!-- Rules Overlay -->
+    <div id="rules-overlay" class="modal hidden">
+        <div class="modal-content rules-content">
+            <h2>Game Rules</h2>
+            <div class="rules-text">
+                <p><strong>Goal:</strong> Clear the deck and the room without dying.</p>
+                <p><strong>Health:</strong> You start with 20 HP. If it drops to 0, you lose.</p>
+
+                <h3>Cards</h3>
+                <ul>
+                    <li><span style="color: #d32f2f;">♥ Hearts (Potions):</span> Heal HP equal to value.</li>
+                    <li><span style="color: #d32f2f;">♦ Diamonds (Weapons):</span> Equip a weapon. Value is attack
+                        power.</li>
+                    <li><span style="color: #bdbdbd;">♠ Spades / ♣ Clubs (Monsters):</span> Fight them!</li>
+                </ul>
+
+                <h3>Combat</h3>
+                <p>Damage taken = Monster Value.</p>
+                <p><strong>With Weapon:</strong> Damage = max(0, Monster Value - Weapon Value).</p>
+                <p><strong>Restriction:</strong> You cannot use a weapon if the monster is stronger than or equal to the
+                    last monster defeated by that weapon.</p>
+
+                <h3>Actions</h3>
+                <p><strong>Run:</strong> You can skip a room once per turn cycle. Cards go to the bottom of the deck.
+                    You cannot skip two rooms in a row.</p>
+            </div>
+            <div class="modal-actions">
+                <button id="close-rules-btn" class="btn">Close</button>
             </div>
         </div>
     </div>
