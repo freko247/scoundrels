@@ -13,7 +13,14 @@ export class UI {
         this.rulesBtn = document.getElementById('rules-btn');
         this.closeRulesBtn = document.getElementById('close-rules-btn');
 
+        this.historyOverlay = document.getElementById('history-overlay');
+        this.historyBtn = document.getElementById('history-btn');
+        this.closeHistoryBtn = document.getElementById('close-history-btn');
+        this.historyTableBody = document.querySelector('#history-table tbody');
+        this.highScoreEl = document.getElementById('high-score');
+
         this.onCardClick = null;
+        this.onGetHistory = null;
     }
 
     bindNewGame(handler) {
@@ -33,18 +40,31 @@ export class UI {
         });
     }
 
+    bindHistory(handler) {
+        this.historyBtn.addEventListener('click', () => {
+            const history = handler();
+            this.renderHistory(history);
+            this.historyOverlay.classList.remove('hidden');
+        });
+        this.closeHistoryBtn.addEventListener('click', () => {
+            this.historyOverlay.classList.add('hidden');
+        });
+    }
+
     bindCardClick(handler) {
         this.onCardClick = handler;
     }
 
-    updateStats(health, weapon, lastFought, cardsLeft) {
+    updateStats(health, weapon, lastFought, cardsLeft, highScore) {
         this.healthEl.textContent = health;
         this.weaponEl.textContent = weapon ? `${weapon.rank}${weapon.suit} (${weapon.value})` : 'None';
         this.lastFoughtEl.textContent = lastFought;
         this.cardsLeftEl.textContent = cardsLeft;
+        this.highScoreEl.textContent = highScore !== undefined ? highScore : '-';
     }
 
     updateSkipButton(canSkip) {
+        this.skipBtn.classList.remove('hidden');
         this.skipBtn.disabled = !canSkip;
         if (canSkip) {
             this.skipBtn.classList.remove('disabled');
@@ -139,14 +159,22 @@ export class UI {
                 <p>Score: ${score}</p>
             </div>
         `;
+        this.skipBtn.classList.add('hidden');
     }
 
-    showGameOver(won, score) {
-        this.roomContainer.innerHTML = `
-            <div style="text-align: center; width: 100%;">
-                <h2>${won ? 'VICTORY!' : 'DEFEAT'}</h2>
-                <p>Score: ${score}</p>
-            </div>
-        `;
+
+
+    renderHistory(history) {
+        this.historyTableBody.innerHTML = '';
+        history.forEach(record => {
+            const row = document.createElement('tr');
+            const date = new Date(record.date).toLocaleDateString() + ' ' + new Date(record.date).toLocaleTimeString();
+            row.innerHTML = `
+                <td>${date}</td>
+                <td>${record.score}</td>
+                <td>${record.cardsLeft}</td>
+            `;
+            this.historyTableBody.appendChild(row);
+        });
     }
 }

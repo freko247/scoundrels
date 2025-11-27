@@ -1,9 +1,11 @@
 import { Deck } from './deck.js';
+import { Storage } from './storage.js';
 
 export class Game {
     constructor(ui) {
         this.ui = ui;
         this.deck = new Deck();
+        this.storage = new Storage();
         this.health = 20;
         this.maxHealth = 20;
         this.weapon = null;
@@ -166,11 +168,20 @@ export class Game {
             }, 0);
             score = -(deckMalus + roomMalus);
         }
+
+        // Save score
+        this.storage.saveScore(score, this.deck.count + this.room.length);
+
         this.ui.showGameOver(won, score);
+
+        // Update stats only, do NOT call updateUI() which re-renders room
+        const highScore = this.storage.getHighScore();
+        this.ui.updateStats(this.health, this.weapon, this.lastFoughtValue, this.deck.count + this.room.length, highScore);
     }
 
     updateUI() {
-        this.ui.updateStats(this.health, this.weapon, this.lastFoughtValue, this.deck.count + this.room.length);
+        const highScore = this.storage.getHighScore();
+        this.ui.updateStats(this.health, this.weapon, this.lastFoughtValue, this.deck.count + this.room.length, highScore);
         this.ui.renderRoom(this.room, this.weapon, this.lastFoughtValue);
         this.ui.updateSkipButton(this.canSkipRoom);
     }

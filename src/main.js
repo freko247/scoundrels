@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Bind rules button
     ui.bindRules();
 
+    // Bind history button
+    ui.bindHistory(() => game.storage.getHistory());
+
     // Start the game
     game.start();
 });
