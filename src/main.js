@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Bind UI events to Game actions
     ui.bindNewGame(() => game.start());
+    ui.bindSkipRoom(() => game.skipRoom());
     ui.bindCardClick((index) => game.playCard(index));
 
     // Bind tutorial button

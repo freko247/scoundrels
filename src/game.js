@@ -10,6 +10,7 @@ export class Game {
         this.lastFoughtValue = 0;
         this.room = [];
         this.cardsPlayedInRoom = 0;
+        this.canSkipRoom = true;
         this.gameOver = false;
     }
 
@@ -20,6 +21,7 @@ export class Game {
         this.lastFoughtValue = 0;
         this.room = [];
         this.cardsPlayedInRoom = 0;
+        this.canSkipRoom = true;
         this.gameOver = false;
 
         this.dealRoom();
@@ -43,6 +45,21 @@ export class Game {
         if (this.room.length === 0 && this.deck.count === 0) {
             this.endGame(true);
         }
+    }
+
+    skipRoom() {
+        if (!this.canSkipRoom || this.gameOver) return;
+
+        // Move current room cards to bottom of deck
+        this.deck.addBottom(this.room);
+        this.room = [];
+
+        // Disable skipping for next turn
+        this.canSkipRoom = false;
+
+        this.dealRoom();
+        this.updateUI();
+        this.ui.showMessage("Room skipped. You cannot skip the next room.");
     }
 
     playCard(index) {
@@ -124,6 +141,7 @@ export class Game {
         // Check if room needs refresh
         if (this.cardsPlayedInRoom >= 3) {
             setTimeout(() => {
+                this.canSkipRoom = true; // Re-enable skipping after clearing a room
                 this.dealRoom();
                 this.updateUI();
                 this.ui.showMessage("New room dealt.");
@@ -149,5 +167,6 @@ export class Game {
     updateUI() {
         this.ui.updateStats(this.health, this.weapon, this.lastFoughtValue, this.deck.count + this.room.length);
         this.ui.renderRoom(this.room);
+        this.ui.updateSkipButton(this.canSkipRoom);
     }
 }

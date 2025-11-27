@@ -50,6 +50,10 @@ export class Deck {
         this.cards.push(...cards);
     }
 
+    addBottom(cards) {
+        this.cards.unshift(...cards);
+    }
+
     getRemainingMonsterValue() {
         return this.cards.reduce((total, card) => {
             return total + (card.type === 'monster' ? card.value : 0);

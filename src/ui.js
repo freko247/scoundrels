@@ -7,6 +7,7 @@ export class UI {
         this.roomContainer = document.getElementById('room-container');
         this.messageArea = document.getElementById('message-area');
         this.resetBtn = document.getElementById('reset-btn');
+        this.skipBtn = document.getElementById('skip-btn');
 
         this.choiceModal = document.getElementById('choice-modal');
         this.useWeaponBtn = document.getElementById('use-weapon-btn');
@@ -19,6 +20,10 @@ export class UI {
         this.resetBtn.addEventListener('click', handler);
     }
 
+    bindSkipRoom(handler) {
+        this.skipBtn.addEventListener('click', handler);
+    }
+
     bindCardClick(handler) {
         this.onCardClick = handler;
     }
@@ -28,6 +33,15 @@ export class UI {
         this.weaponEl.textContent = weapon ? `${weapon.rank}${weapon.suit} (${weapon.value})` : 'None';
         this.lastFoughtEl.textContent = lastFought;
         this.cardsLeftEl.textContent = cardsLeft;
+    }
+
+    updateSkipButton(canSkip) {
+        this.skipBtn.disabled = !canSkip;
+        if (canSkip) {
+            this.skipBtn.classList.remove('disabled');
+        } else {
+            this.skipBtn.classList.add('disabled');
+        }
     }
 
     renderRoom(cards) {
