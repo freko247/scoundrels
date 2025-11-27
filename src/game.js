@@ -62,7 +62,7 @@ export class Game {
         this.ui.showMessage("Room skipped. You cannot skip the next room.");
     }
 
-    playCard(index) {
+    playCard(index, useWeapon = false) {
         if (this.gameOver) return;
         if (index < 0 || index >= this.room.length) return;
 
@@ -82,23 +82,28 @@ export class Game {
             this.finishTurn(index, message);
         } else if (card.type === 'monster') {
             // Combat
-            if (this.weapon) {
-                // Check if weapon can be used
-                // Rule: Cannot use weapon if monster value >= last monster defeated by weapon
-                const weaponIneffective = (this.lastFoughtValue > 0 && card.value >= this.lastFoughtValue);
+            // useWeapon is passed directly from UI
 
+            // Validation (double check)
+            if (useWeapon && this.weapon) {
+                const weaponIneffective = (this.lastFoughtValue > 0 && card.value >= this.lastFoughtValue);
                 if (weaponIneffective) {
-                    // Must fight barehanded (or weapon is ineffective)
-                    this.resolveCombat(card, index, false, true); // ineffective = true
+                    // Should be disabled in UI, but fallback to barehanded or error
+                    // Let's treat as barehanded for safety or just process as ineffective weapon usage?
+                    // Rule: "You cannot use a weapon..." -> implies action is invalid.
+                    // But let's assume UI handles it and if they somehow click it, it fails or goes barehanded.
+                    // Let's stick to the logic: if they try to use it and it's ineffective, they take full damage (as per previous logic, but maybe that was just 'ineffective weapon' flavor text).
+                    // Actually, previous logic was: if ineffective, AUTOMATICALLY fight barehanded/take full damage.
+                    // Now user explicitly chooses.
+
+                    // If they explicitly chose weapon but it's ineffective, we can either block it or punish.
+                    // Given UI disables the button, this is a fallback.
+                    this.resolveCombat(card, index, false, true); // Treat as ineffective
                 } else {
-                    // Weapon IS effective. User has a CHOICE.
-                    this.ui.showChoice((useWeapon) => {
-                        this.resolveCombat(card, index, useWeapon, false);
-                    });
-                    return; // Stop execution here, wait for callback
+                    this.resolveCombat(card, index, true, false);
                 }
             } else {
-                // No weapon, fight barehanded
+                // Barehanded
                 this.resolveCombat(card, index, false, false);
             }
         }
@@ -166,7 +171,7 @@ export class Game {
 
     updateUI() {
         this.ui.updateStats(this.health, this.weapon, this.lastFoughtValue, this.deck.count + this.room.length);
-        this.ui.renderRoom(this.room);
+        this.ui.renderRoom(this.room, this.weapon, this.lastFoughtValue);
         this.ui.updateSkipButton(this.canSkipRoom);
     }
 }

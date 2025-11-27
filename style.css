@@ -239,6 +239,58 @@ h1 {
     animation-delay: 0.4s;
 }
 
+/* Card Actions */
+.card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.action-btn {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover:not(:disabled) {
+    background-color: var(--accent-color);
+    color: black;
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.weapon-btn {
+    border: 1px solid var(--weapon-color);
+}
+
+.bare-btn {
+    border: 1px solid var(--danger-color);
+}
+
+.heal-btn {
+    border: 1px solid var(--health-color);
+}
+
+.equip-btn {
+    border: 1px solid var(--weapon-color);
+}
+
 /* Rules Styles */
 .rules-content {
     max-width: 600px;

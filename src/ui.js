@@ -9,10 +9,6 @@ export class UI {
         this.resetBtn = document.getElementById('reset-btn');
         this.skipBtn = document.getElementById('skip-btn');
 
-        this.choiceModal = document.getElementById('choice-modal');
-        this.useWeaponBtn = document.getElementById('use-weapon-btn');
-        this.barehandedBtn = document.getElementById('barehanded-btn');
-
         this.rulesOverlay = document.getElementById('rules-overlay');
         this.rulesBtn = document.getElementById('rules-btn');
         this.closeRulesBtn = document.getElementById('close-rules-btn');
@@ -57,9 +53,12 @@ export class UI {
         }
     }
 
-    renderRoom(cards) {
+    renderRoom(cards, weapon, lastFoughtValue) {
         this.roomContainer.innerHTML = '';
         cards.forEach((card, index) => {
+            const cardWrapper = document.createElement('div');
+            cardWrapper.className = 'card-wrapper';
+
             const cardEl = document.createElement('div');
             cardEl.className = `card ${card.color}`;
             cardEl.innerHTML = `
@@ -74,13 +73,58 @@ export class UI {
                 </div>
             `;
 
-            cardEl.addEventListener('click', () => {
-                if (this.onCardClick) {
-                    this.onCardClick(index);
-                }
-            });
+            // Common card wrapper
+            cardWrapper.appendChild(cardEl);
 
-            this.roomContainer.appendChild(cardEl);
+            const actionsEl = document.createElement('div');
+            actionsEl.className = 'card-actions';
+
+            if (card.type === 'monster') {
+                const weaponBtn = document.createElement('button');
+                weaponBtn.className = 'action-btn weapon-btn';
+                weaponBtn.textContent = 'Use Weapon';
+
+                // Check if weapon can be used
+                const canUseWeapon = weapon && (lastFoughtValue === 0 || card.value < lastFoughtValue);
+                weaponBtn.disabled = !canUseWeapon;
+
+                weaponBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (this.onCardClick) this.onCardClick(index, true);
+                });
+
+                const bareBtn = document.createElement('button');
+                bareBtn.className = 'action-btn bare-btn';
+                bareBtn.textContent = 'Fight barehand';
+                bareBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (this.onCardClick) this.onCardClick(index, false);
+                });
+
+                actionsEl.appendChild(weaponBtn);
+                actionsEl.appendChild(bareBtn);
+            } else if (card.type === 'potion') {
+                const healBtn = document.createElement('button');
+                healBtn.className = 'action-btn heal-btn';
+                healBtn.textContent = 'Heal';
+                healBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (this.onCardClick) this.onCardClick(index);
+                });
+                actionsEl.appendChild(healBtn);
+            } else if (card.type === 'weapon') {
+                const equipBtn = document.createElement('button');
+                equipBtn.className = 'action-btn equip-btn';
+                equipBtn.textContent = 'Equip';
+                equipBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (this.onCardClick) this.onCardClick(index);
+                });
+                actionsEl.appendChild(equipBtn);
+            }
+
+            cardWrapper.appendChild(actionsEl);
+            this.roomContainer.appendChild(cardWrapper);
         });
     }
 
@@ -97,27 +141,12 @@ export class UI {
         `;
     }
 
-    showChoice(callback) {
-        this.choiceModal.classList.remove('hidden');
-
-        // Clean up previous listeners to avoid duplicates if any (simple approach)
-        const newWeaponBtn = this.useWeaponBtn.cloneNode(true);
-        const newBareBtn = this.barehandedBtn.cloneNode(true);
-
-        this.useWeaponBtn.parentNode.replaceChild(newWeaponBtn, this.useWeaponBtn);
-        this.barehandedBtn.parentNode.replaceChild(newBareBtn, this.barehandedBtn);
-
-        this.useWeaponBtn = newWeaponBtn;
-        this.barehandedBtn = newBareBtn;
-
-        this.useWeaponBtn.addEventListener('click', () => {
-            this.choiceModal.classList.add('hidden');
-            callback(true);
-        });
-
-        this.barehandedBtn.addEventListener('click', () => {
-            this.choiceModal.classList.add('hidden');
-            callback(false);
-        });
+    showGameOver(won, score) {
+        this.roomContainer.innerHTML = `
+            <div style="text-align: center; width: 100%;">
+                <h2>${won ? 'VICTORY!' : 'DEFEAT'}</h2>
+                <p>Score: ${score}</p>
+            </div>
+        `;
     }
 }
