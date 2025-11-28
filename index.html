@@ -15,13 +15,14 @@
 <body>
     <div id="app">
         <header>
-            <h1>Scoundrels</h1>
+            <h1 data-i18n="GAME_TITLE">Scoundrels</h1>
             <div id="stats">
-                <div class="stat">Health: <span id="health">20</span>/20</div>
-                <div class="stat">Weapon: <span id="weapon">None</span></div>
-                <div class="stat">Last Fought: <span id="last-fought">0</span></div>
-                <div class="stat">Cards Left: <span id="cards-left">0</span></div>
-                <div class="stat">High Score: <span id="high-score">0</span></div>
+                <div class="stat"><span data-i18n="HEALTH">Health</span>: <span id="health">20</span>/20</div>
+                <div class="stat"><span data-i18n="WEAPON">Weapon</span>: <span id="weapon">None</span></div>
+                <div class="stat"><span data-i18n="LAST_FOUGHT">Last Fought</span>: <span id="last-fought">0</span>
+                </div>
+                <div class="stat"><span data-i18n="CARDS_LEFT">Cards Left</span>: <span id="cards-left">0</span></div>
+                <div class="stat"><span data-i18n="HIGH_SCORE">High Score</span>: <span id="high-score">0</span></div>
             </div>
         </header>
 
@@ -31,14 +32,22 @@
             </div>
             <div id="message-area"></div>
             <div id="action-area">
-                <button id="skip-btn" class="btn">Run (Skip Room)</button>
+                <button id="skip-btn" class="btn" data-i18n="RUN_SKIP">Run (Skip Room)</button>
             </div>
         </main>
 
         <div id="controls">
-            <button id="reset-btn" class="btn">New Game</button>
-            <button id="rules-btn" class="btn">Rules</button>
-            <button id="history-btn" class="btn">Score History</button>
+            <button id="reset-btn" class="btn" data-i18n="NEW_GAME">New Game</button>
+            <button id="rules-btn" class="btn" data-i18n="RULES">Rules</button>
+            <button id="history-btn" class="btn" data-i18n="SCORE_HISTORY">Score History</button>
+            <select id="language-selector" class="btn">
+                <option value="en">🇬🇧 EN</option>
+                <option value="da">🇩🇰 DA</option>
+                <option value="no">🇳🇴 NO</option>
+                <option value="sv">🇸🇪 SV</option>
+                <option value="fi">🇫🇮 FI</option>
+                <option value="is">🇮🇸 IS</option>
+            </select>
         </div>
 
 
@@ -52,45 +61,51 @@
     <!-- Rules Overlay -->
     <div id="rules-overlay" class="modal hidden">
         <div class="modal-content rules-content">
-            <h2>Game Rules</h2>
+            <h2 data-i18n="GAME_RULES_TITLE">Game Rules</h2>
             <div class="rules-text">
-                <p><strong>Goal:</strong> Clear the deck and the room without dying.</p>
-                <p><strong>Health:</strong> You start with 20 HP. If it drops to 0, you lose.</p>
+                <p><strong data-i18n="GOAL_LABEL">Goal:</strong> <span data-i18n="GOAL_TEXT">Clear the deck and the room
+                        without dying.</span></p>
+                <p><strong data-i18n="HEALTH_LABEL">Health:</strong> <span data-i18n="HEALTH_TEXT">You start with 20 HP.
+                        If it drops to 0, you lose.</span></p>
 
-                <h3>Cards</h3>
+                <h3 data-i18n="CARDS_TITLE">Cards</h3>
                 <ul>
-                    <li><span style="color: #d32f2f;">♥ Hearts (Potions):</span> Heal HP equal to value.</li>
-                    <li><span style="color: #d32f2f;">♦ Diamonds (Weapons):</span> Equip a weapon. Value is attack
-                        power.</li>
-                    <li><span style="color: #bdbdbd;">♠ Spades / ♣ Clubs (Monsters):</span> Fight them!</li>
+                    <li data-i18n="HEARTS_TEXT"><span style="color: #d32f2f;">♥ Hearts (Potions):</span> Heal HP equal
+                        to value.</li>
+                    <li data-i18n="DIAMONDS_TEXT"><span style="color: #d32f2f;">♦ Diamonds (Weapons):</span> Equip a
+                        weapon. Value is attack power.</li>
+                    <li data-i18n="MONSTERS_TEXT"><span style="color: #bdbdbd;">♠ Spades / ♣ Clubs (Monsters):</span>
+                        Fight them!</li>
                 </ul>
 
-                <h3>Combat</h3>
-                <p>Damage taken = Monster Value.</p>
-                <p><strong>With Weapon:</strong> Damage = max(0, Monster Value - Weapon Value).</p>
-                <p><strong>Restriction:</strong> You cannot use a weapon if the monster is stronger than or equal to the
-                    last monster defeated by that weapon.</p>
+                <h3 data-i18n="COMBAT_TITLE">Combat</h3>
+                <p data-i18n="DAMAGE_FORMULA">Damage taken = Monster Value.</p>
+                <p><strong data-i18n="WITH_WEAPON_LABEL">With Weapon:</strong> <span data-i18n="WITH_WEAPON_TEXT">Damage
+                        = max(0, Monster Value - Weapon Value).</span></p>
+                <p><strong data-i18n="RESTRICTION_LABEL">Restriction:</strong> <span data-i18n="RESTRICTION_TEXT">You
+                        cannot use a weapon if the monster is stronger than or equal to the last monster defeated by
+                        that weapon.</span></p>
 
-                <h3>Actions</h3>
-                <p><strong>Run:</strong> You can skip a room once per turn cycle. Cards go to the bottom of the deck.
-                    You cannot skip two rooms in a row.</p>
+                <h3 data-i18n="ACTIONS_TITLE">Actions</h3>
+                <p><strong data-i18n="RUN_LABEL">Run:</strong> <span data-i18n="RUN_TEXT">You can skip a room once per
+                        turn cycle. Cards go to the bottom of the deck. You cannot skip two rooms in a row.</span></p>
             </div>
             <div class="modal-actions">
-                <button id="close-rules-btn" class="btn">Close</button>
+                <button id="close-rules-btn" class="btn" data-i18n="CLOSE">Close</button>
             </div>
         </div>
     </div>
     <!-- History Overlay -->
     <div id="history-overlay" class="modal hidden">
         <div class="modal-content history-content">
-            <h2>Score History</h2>
+            <h2 data-i18n="HISTORY_TITLE">Score History</h2>
             <div class="history-table-container">
                 <table id="history-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Score</th>
-                            <th>Cards Left</th>
+                            <th data-i18n="DATE_HEADER">Date</th>
+                            <th data-i18n="SCORE_HEADER">Score</th>
+                            <th data-i18n="CARDS_LEFT_HEADER">Cards Left</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -99,7 +114,7 @@
                 </table>
             </div>
             <div class="modal-actions">
-                <button id="close-history-btn" class="btn">Close</button>
+                <button id="close-history-btn" class="btn" data-i18n="CLOSE">Close</button>
             </div>
         </div>
     </div>

@@ -1,5 +1,6 @@
 import { Deck } from './deck.js';
 import { Storage } from './storage.js';
+import { t } from './i18n.js';
 
 export class Game {
     constructor(ui) {
@@ -28,7 +29,7 @@ export class Game {
 
         this.dealRoom();
         this.updateUI();
-        this.ui.showMessage("Welcome to Scoundrels! Choose a card.");
+        this.ui.showMessage(t('WELCOME_MSG'));
     }
 
     dealRoom() {
@@ -61,7 +62,7 @@ export class Game {
 
         this.dealRoom();
         this.updateUI();
-        this.ui.showMessage("Room skipped. You cannot skip the next room.");
+        this.ui.showMessage(t('ROOM_SKIPPED_MSG'));
     }
 
     playCard(index, useWeapon = false) {
@@ -75,12 +76,12 @@ export class Game {
             const healAmount = card.value;
             const oldHealth = this.health;
             this.health = Math.min(this.health + healAmount, this.maxHealth);
-            message = `Healed ${this.health - oldHealth} HP.`;
+            message = t('HEALED_MSG', { amount: this.health - oldHealth });
             this.finishTurn(index, message);
         } else if (card.type === 'weapon') {
             this.weapon = card;
             this.lastFoughtValue = 0;
-            message = `Equipped ${card.toString()}.`;
+            message = t('EQUIPPED_MSG', { card: card.toString() });
             this.finishTurn(index, message);
         } else if (card.type === 'monster') {
             // Combat
@@ -116,17 +117,17 @@ export class Game {
         let damage = card.value;
 
         if (weaponIneffective) {
-            message = `Weapon ineffective! Took ${damage} damage.`;
+            message = t('WEAPON_INEFFECTIVE_MSG', { damage: damage });
             this.health -= damage;
         } else if (useWeapon) {
             const damageTaken = Math.max(0, damage - this.weapon.value);
             this.health -= damageTaken;
             this.lastFoughtValue = card.value;
-            message = `Fought with weapon. Took ${damageTaken} damage.`;
+            message = t('FOUGHT_WEAPON_MSG', { damage: damageTaken });
         } else {
             // Barehanded (voluntary or no weapon)
             this.health -= damage;
-            message = `Fought barehanded. Took ${damage} damage.`;
+            message = t('FOUGHT_BAREHAND_MSG', { damage: damage });
         }
 
         this.finishTurn(index, message);
@@ -151,7 +152,7 @@ export class Game {
                 this.canSkipRoom = true; // Re-enable skipping after clearing a room
                 this.dealRoom();
                 this.updateUI();
-                this.ui.showMessage("New room dealt.");
+                this.ui.showMessage(t('NEW_ROOM_MSG'));
             }, 500);
         } else if (this.room.length === 0 && this.deck.count === 0) {
             this.endGame(true);

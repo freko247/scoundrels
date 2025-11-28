@@ -1,3 +1,5 @@
+import { t } from './i18n.js';
+
 export class UI {
     constructor() {
         this.healthEl = document.getElementById('health');
@@ -57,7 +59,7 @@ export class UI {
 
     updateStats(health, weapon, lastFought, cardsLeft, highScore) {
         this.healthEl.textContent = health;
-        this.weaponEl.textContent = weapon ? `${weapon.rank}${weapon.suit} (${weapon.value})` : 'None';
+        this.weaponEl.textContent = weapon ? `${weapon.rank}${weapon.suit} (${weapon.value})` : t('NONE');
         this.lastFoughtEl.textContent = lastFought;
         this.cardsLeftEl.textContent = cardsLeft;
         this.highScoreEl.textContent = highScore !== undefined ? highScore : '-';
@@ -102,7 +104,7 @@ export class UI {
             if (card.type === 'monster') {
                 const weaponBtn = document.createElement('button');
                 weaponBtn.className = 'action-btn weapon-btn';
-                weaponBtn.textContent = 'Use Weapon';
+                weaponBtn.textContent = t('USE_WEAPON');
 
                 // Check if weapon can be used
                 const canUseWeapon = weapon && (lastFoughtValue === 0 || card.value < lastFoughtValue);
@@ -115,7 +117,7 @@ export class UI {
 
                 const bareBtn = document.createElement('button');
                 bareBtn.className = 'action-btn bare-btn';
-                bareBtn.textContent = 'Fight barehand';
+                bareBtn.textContent = t('FIGHT_BAREHAND');
                 bareBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (this.onCardClick) this.onCardClick(index, false);
@@ -126,7 +128,7 @@ export class UI {
             } else if (card.type === 'potion') {
                 const healBtn = document.createElement('button');
                 healBtn.className = 'action-btn heal-btn';
-                healBtn.textContent = 'Heal';
+                healBtn.textContent = t('HEAL');
                 healBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (this.onCardClick) this.onCardClick(index);
@@ -135,7 +137,7 @@ export class UI {
             } else if (card.type === 'weapon') {
                 const equipBtn = document.createElement('button');
                 equipBtn.className = 'action-btn equip-btn';
-                equipBtn.textContent = 'Equip';
+                equipBtn.textContent = t('EQUIP');
                 equipBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (this.onCardClick) this.onCardClick(index);
@@ -155,8 +157,8 @@ export class UI {
     showGameOver(won, score) {
         this.roomContainer.innerHTML = `
             <div style="text-align: center; width: 100%;">
-                <h2>${won ? 'VICTORY!' : 'DEFEAT'}</h2>
-                <p>Score: ${score}</p>
+                <h2>${won ? t('VICTORY') : t('DEFEAT')}</h2>
+                <p>${t('SCORE')}: ${score}</p>
             </div>
         `;
         this.skipBtn.classList.add('hidden');

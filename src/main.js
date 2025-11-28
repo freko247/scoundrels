@@ -1,5 +1,6 @@
 import { Game } from './game.js';
 import { UI } from './ui.js';
+import { setLocale } from './i18n.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const ui = new UI();
@@ -15,6 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Bind history button
     ui.bindHistory(() => game.storage.getHistory());
+
+    // Bind language selector
+    const languageSelector = document.getElementById('language-selector');
+    languageSelector.addEventListener('change', (e) => {
+        setLocale(e.target.value);
+        // Re-render current state to update dynamic strings
+        game.updateUI();
+    });
+
+    // Initialize language
+    setLocale('en');
 
     // Start the game
     game.start();
