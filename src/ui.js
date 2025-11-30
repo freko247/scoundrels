@@ -65,13 +65,17 @@ export class UI {
         this.highScoreEl.textContent = highScore !== undefined ? highScore : '-';
     }
 
-    updateSkipButton(canSkip) {
-        this.skipBtn.classList.remove('hidden');
-        this.skipBtn.disabled = !canSkip;
-        if (canSkip) {
-            this.skipBtn.classList.remove('disabled');
+    updateSkipButton(canSkip, cardsPlayed = 0) {
+        if (cardsPlayed > 0) {
+            this.skipBtn.classList.add('hidden');
         } else {
-            this.skipBtn.classList.add('disabled');
+            this.skipBtn.classList.remove('hidden');
+            this.skipBtn.disabled = !canSkip;
+            if (canSkip) {
+                this.skipBtn.classList.remove('disabled');
+            } else {
+                this.skipBtn.classList.add('disabled');
+            }
         }
     }
 
@@ -107,7 +111,7 @@ export class UI {
                 weaponBtn.textContent = t('USE_WEAPON');
 
                 // Check if weapon can be used
-                const canUseWeapon = weapon && (lastFoughtValue === 0 || card.value < lastFoughtValue);
+                const canUseWeapon = weapon && (lastFoughtValue === 0 || card.value <= lastFoughtValue);
                 weaponBtn.disabled = !canUseWeapon;
 
                 weaponBtn.addEventListener('click', (e) => {

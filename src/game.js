@@ -11,6 +11,7 @@ export class Game {
         this.maxHealth = 20;
         this.weapon = null;
         this.lastFoughtValue = 0;
+        this.lastCardPlayed = null;
         this.room = [];
         this.cardsPlayedInRoom = 0;
         this.canSkipRoom = true;
@@ -22,6 +23,7 @@ export class Game {
         this.health = 20;
         this.weapon = null;
         this.lastFoughtValue = 0;
+        this.lastCardPlayed = null;
         this.room = [];
         this.cardsPlayedInRoom = 0;
         this.canSkipRoom = true;
@@ -51,7 +53,7 @@ export class Game {
     }
 
     skipRoom() {
-        if (!this.canSkipRoom || this.gameOver) return;
+        if (!this.canSkipRoom || this.gameOver || this.cardsPlayedInRoom > 0) return;
 
         // Move current room cards to bottom of deck
         this.deck.addBottom(this.room);
@@ -76,11 +78,13 @@ export class Game {
             const healAmount = card.value;
             const oldHealth = this.health;
             this.health = Math.min(this.health + healAmount, this.maxHealth);
+            this.lastCardPlayed = card;
             message = t('HEALED_MSG', { amount: this.health - oldHealth });
             this.finishTurn(index, message);
         } else if (card.type === 'weapon') {
             this.weapon = card;
             this.lastFoughtValue = 0;
+            this.lastCardPlayed = card;
             message = t('EQUIPPED_MSG', { card: card.toString() });
             this.finishTurn(index, message);
         } else if (card.type === 'monster') {
@@ -89,7 +93,7 @@ export class Game {
 
             // Validation (double check)
             if (useWeapon && this.weapon) {
-                const weaponIneffective = (this.lastFoughtValue > 0 && card.value >= this.lastFoughtValue);
+                const weaponIneffective = (this.lastFoughtValue > 0 && card.value > this.lastFoughtValue);
                 if (weaponIneffective) {
                     // Should be disabled in UI, but fallback to barehanded or error
                     // Let's treat as barehanded for safety or just process as ineffective weapon usage?
@@ -127,6 +131,7 @@ export class Game {
         } else {
             // Barehanded (voluntary or no weapon)
             this.health -= damage;
+            this.lastCardPlayed = card;
             message = t('FOUGHT_BAREHAND_MSG', { damage: damage });
         }
 
@@ -168,6 +173,11 @@ export class Game {
                 return total + (card.type === 'monster' ? card.value : 0);
             }, 0);
             score = -(deckMalus + roomMalus);
+        } else {
+            // Special victory scoring: if at 20 HP and last card was a potion, add potion value
+            if (this.health === 20 && this.lastCardPlayed && this.lastCardPlayed.type === 'potion') {
+                score = this.health + this.lastCardPlayed.value;
+            }
         }
 
         // Save score
@@ -184,6 +194,6 @@ export class Game {
         const highScore = this.storage.getHighScore();
         this.ui.updateStats(this.health, this.weapon, this.lastFoughtValue, this.deck.count + this.room.length, highScore);
         this.ui.renderRoom(this.room, this.weapon, this.lastFoughtValue);
-        this.ui.updateSkipButton(this.canSkipRoom);
+        this.ui.updateSkipButton(this.canSkipRoom, this.cardsPlayedInRoom);
     }
 }
